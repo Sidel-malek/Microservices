@@ -1,0 +1,34 @@
+server:
+  port: 7777
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: TRACE
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8888/eureka
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id : route1
+          predicates:
+            - Path=/cloud/etablissement/**
+          filters:
+            - RewritePath=/cloud/etablissement/(?<s>.*), /${s}
+
+          uri: lb://ms-etablissement
+
+        - id : route2
+          predicates:
+            - Path=/cloud/equipe/**
+          filters:
+            - RewritePath=/cloud/equipe/(?<s>.*), /${s}
+
+          uri: lb://ms-equipe
